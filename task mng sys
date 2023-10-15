@@ -1,1 +1,93 @@
-program for a command-line task management system. Users should be able to perform various operations on tasks, including adding new tasks, displaying them, marking them as completed, deleting tasks, saving tasks to a file, and loading tasks from a file.
+import pickle
+
+class Task:
+    def __init__(self, title, description, completed=False):
+        self.title = title
+        self.description = description
+        self.completed = completed
+
+def disptask(tasks):
+    if not tasks:
+        print("No tasks available.")
+    else:
+        for i, task in enumerate(tasks):
+            status = "Completed" if task.completed else "Not Completed"
+            print(f"{i + 1}. {task.title} - {task.description} ({status})")
+
+def savetask(tasks):
+    with open("tasks.pkl", "wb") as file:
+        pickle.dump(tasks, file)
+    print("Tasks saved to 'tasks.pkl'")
+
+def loadtask(tasks):
+    try:
+        with open("tasks.pkl", "rb") as file:
+            tasks.extend(pickle.load(file))
+        print("Tasks loaded from 'tasks.pkl'")
+    except FileNotFoundError:
+        print("No saved tasks found.")
+
+def main():
+    tasks = []
+
+    while True:
+        print("\nTask Management System")
+        print("1. Add task")
+        print("2. Display tasks")
+        print("3. Mark task as completed")
+        print("4. Delete task")
+        print("5. Save tasks")
+        print("6. Load tasks")
+        print("7. Quit")
+
+        choice = input("Enter choice: ")
+
+        if choice == "1":
+            title = input("Enter title: ")
+            description = input("Enter description: ")
+            task = Task(title, description)
+            tasks.append(task)
+            print("Task added ")
+
+        elif choice == "2":
+            disptask(tasks)
+
+        elif choice == "3":
+            disptask(tasks)
+            try:
+                index = int(input("Enter the task number to mark as completed: ")) - 1
+                if 0 <= index < len(tasks):
+                    tasks[index].completed = True
+                    print("Task marked as completed!")
+                else:
+                    print("Invalid task number.")
+            except ValueError:
+                print("Invalid input.")
+
+        elif choice == "4":
+            disptask(tasks)
+            try:
+                index = int(input("Enter the task number to delete: ")) - 1
+                if 0 <= index < len(tasks):
+                    deleted_task = tasks.pop(index)
+                    print(f"Task '{deleted_task.title}' deleted!")
+                else:
+                    print("Invalid task number.")
+            except ValueError:
+                print("Invalid input.")
+
+        elif choice == "5":
+            savetask(tasks)
+
+        elif choice == "6":
+            loadtask(tasks)
+
+        elif choice == "7":
+            print("End")
+            break
+
+        else:
+            print("Invalid choice.")
+
+if __name__ == "__main__":
+    main()
